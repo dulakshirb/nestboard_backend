@@ -10,6 +10,7 @@ import cors from "cors";
 import { corsOrigins, env } from "./lib/env.js";
 import { bookingsRouter } from "./routes/bookings.js";
 import { uploadsRouter } from "./routes/uploads.js";
+import { usersRouter } from "./routes/users.js";
 import path from "node:path";
 import rateLimit from "express-rate-limit";
 
@@ -39,6 +40,7 @@ export function buildApp(): Express {
   app.use("/api/auth", authRouter);
   app.use("/api/bookings/", bookingsRouter);
   app.use("/api/uploads", uploadsRouter);
+  app.use("/api/users", usersRouter);
   app.use("/uploads", express.static(path.resolve(env.UPLOAD_LOCAL_DIR)));
 
   app.get("/", (_req, res) => {

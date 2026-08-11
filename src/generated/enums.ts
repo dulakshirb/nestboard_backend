@@ -44,3 +44,11 @@ export const PropertyType = {
 } as const
 
 export type PropertyType = (typeof PropertyType)[keyof typeof PropertyType]
+
+
+export const ReviewStatus = {
+  ACTIVE: 'ACTIVE',
+  DELETED: 'DELETED'
+} as const
+
+export type ReviewStatus = (typeof ReviewStatus)[keyof typeof ReviewStatus]

@@ -12,8 +12,7 @@ import { createRoomSchema, createRoomTypeSchema, updateRoomSchema, updateRoomTyp
 import { Errors } from "../lib/errors.js";
 import { optionalAuth, requireRole, verifyJwt } from "../middleware/auth.js";
 import { Role } from "../generated/enums.js";
-import { Prisma } from "../generated/client.js";
-import type { PropertyType } from "../generated/client.js";
+import type { Prisma, PropertyType } from "../generated/client.js";
 import { activeBookingWhere, leaseRange } from "../services/availability.js";
 
 export const propertiesRouter: Router = Router();
@@ -556,10 +555,8 @@ propertiesRouter.delete(
       });
       res.status(204).send();
     } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2003"
-      ) {
+      const errCode = (err as { code?: string }).code;
+      if (errCode === "P2003" || errCode === "P2039") {
         next(Errors.conflict("In use by a booking; cannot delete"));
         return;
       }
@@ -635,10 +632,8 @@ propertiesRouter.delete(
       await prisma.room.delete({ where: { id: String(req.params.roomId) } });
       res.status(204).send();
     } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2003"
-      ) {
+      const errCode = (err as { code?: string }).code;
+      if (errCode === "P2003" || errCode === "P2039") {
         next(Errors.conflict("In use by a booking; cannot delete"));
         return;
       }
@@ -661,10 +656,8 @@ propertiesRouter.delete(
       });
       res.status(204).send();
     } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2003"
-      ) {
+      const errCode = (err as { code?: string }).code;
+      if (errCode === "P2003" || errCode === "P2039") {
         next(
           Errors.conflict(
             "Property has rooms or bookings; deactivate it instead",

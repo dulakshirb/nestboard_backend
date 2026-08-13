@@ -2,7 +2,6 @@ import type { ErrorRequestHandler } from "express";
 import { AppError } from "../lib/errors.js";
 import { z, ZodError } from "zod";
 import { logger } from "../lib/logger.js";
-import { Prisma } from "../generated/client.js";
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof AppError) {
@@ -25,10 +24,8 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     });
     return;
   }
-  if (
-    err instanceof Prisma.PrismaClientKnownRequestError &&
-    err.code === "40001"
-  ) {
+  const errCode = (err as { code?: string }).code;
+  if (errCode === "40001" || errCode === "P2034") {
     res.status(409).json({
       error: {
         code: "CONFLICT",

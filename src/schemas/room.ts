@@ -1,14 +1,25 @@
 import { z } from "zod";
 
-export const createRoomSchema = z
+export const createRoomTypeSchema = z
   .object({
-    id: z.string().startsWith("r").min(2),
-    name: z.string().max(10).min(3),
-    price: z.number().min(0),
-    seatsTotal: z.number().min(0),
-    seatsFree: z.number().min(0),
-    hasAC: z.boolean(),
+    name: z.string().min(2).max(120),
+    pricePerMonth: z.number().positive(),
+    seatCapacity: z.number().int().min(1).max(20),
+    hasAC: z.boolean().default(false),
+    isAvailable: z.boolean().default(true),
   })
   .strict();
 
+export const updateRoomTypeSchema = createRoomTypeSchema.partial();
+
+export const createRoomSchema = z
+  .object({
+    roomLabel: z.string().min(2).max(120),
+    isAvailable: z.boolean().default(true),
+  })
+  .strict();
+
+export const updateRoomSchema = createRoomSchema.partial();
+
+export type CreateRoomTypeInput = z.infer<typeof createRoomTypeSchema>;
 export type CreateRoomInput = z.infer<typeof createRoomSchema>;

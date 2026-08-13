@@ -4,7 +4,6 @@ import { prisma as defaultPrisma } from "../lib/prisma.js";
 import { Errors } from "../lib/errors.js";
 import type { CreateBookingInput } from "../schemas/booking.js";
 import { leaseRange, TEN_MIN_MS } from "./availability.js";
-
 async function createBooking(
   tenantId: string,
   input: CreateBookingInput,
@@ -164,4 +163,32 @@ export async function listMyBookings(
       room: { include: { roomType: { include: { property: true } } } },
     },
   });
+}
+
+export async function ListVendorBookings(
+  vendorId: string,
+  db: PrismaClient = defaultPrisma,
+) {
+  return db.booking.findMany({
+    where: {
+      room: {
+        roomType: {
+          property: { vendorId }
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    include: {
+      tenant: {
+        select: { id: true, displayName: true, email: true, avatarUrl: true },
+      },
+      room: {
+        include: {
+          roomType: {
+            include: { property: true },
+          },
+        },
+      },
+    },
+  })
 }

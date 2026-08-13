@@ -12,7 +12,8 @@ import { createRoomSchema, createRoomTypeSchema, updateRoomSchema, updateRoomTyp
 import { Errors } from "../lib/errors.js";
 import { optionalAuth, requireRole, verifyJwt } from "../middleware/auth.js";
 import { Role } from "../generated/enums.js";
-import type { Prisma, PropertyType } from "../generated/client.js";
+import { Prisma } from "../generated/client.js";
+import type { PropertyType } from "../generated/client.js";
 import { activeBookingWhere, leaseRange } from "../services/availability.js";
 
 export const propertiesRouter: Router = Router();
@@ -555,6 +556,13 @@ propertiesRouter.delete(
       });
       res.status(204).send();
     } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2003"
+      ) {
+        next(Errors.conflict("In use by a booking; cannot delete"));
+        return;
+      }
       next(err);
     }
   },
@@ -627,6 +635,13 @@ propertiesRouter.delete(
       await prisma.room.delete({ where: { id: String(req.params.roomId) } });
       res.status(204).send();
     } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2003"
+      ) {
+        next(Errors.conflict("In use by a booking; cannot delete"));
+        return;
+      }
       next(err);
     }
   },
@@ -638,13 +653,25 @@ propertiesRouter.delete(
   requireRole(Role.ADMIN),
   async (req, res, next) => {
     try {
+      const vendorId = req.user?.id;
+      if (!vendorId) throw Errors.unauthenticated();
+      await getOwnedProperty(vendorId, String(req.params.id));
       await prisma.property.delete({
-        where: {
-          id: String(req.params.id),
-        },
+        where: { id: String(req.params.id) },
       });
       res.status(204).send();
     } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2003"
+      ) {
+        next(
+          Errors.conflict(
+            "Property has rooms or bookings; deactivate it instead",
+          ),
+        );
+        return;
+      }
       next(err);
     }
   },

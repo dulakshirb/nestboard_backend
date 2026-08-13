@@ -7,7 +7,7 @@ import {
   toRoomTypeDTO,
 } from "../lib/dto.js";
 import { validateBody } from "../middleware/validate.js";
-import { createPropertySchema } from "../schemas/property.js";
+import { createPropertySchema, updatePropertySchema } from "../schemas/property.js";
 import { Errors } from "../lib/errors.js";
 import { optionalAuth, requireRole, verifyJwt } from "../middleware/auth.js";
 import { Role } from "../generated/enums.js";
@@ -422,6 +422,32 @@ propertiesRouter.post(
         },
       });
       res.status(201).location(`${req.baseUrl}/${property.id}`).json(property);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+propertiesRouter.patch(
+  "/:id",
+  verifyJwt,
+  requireRole(Role.ADMIN),
+  validateBody(updatePropertySchema),
+  async (req, res, next) => {
+    try {
+      const vendorId = req.user?.id;
+      if (!vendorId) throw Errors.unauthenticated();
+      const property = await prisma.property.findUnique({
+        where: { id: String(req.params.id) },
+        select: { id: true, vendorId: true },
+      });
+      if (!property) throw Errors.notFound("Property");
+      if (property.vendorId !== vendorId) throw Errors.forbidden();
+      const updated = await prisma.property.update({
+        where: { id: property.id },
+        data: req.body,
+      });
+      res.json(updated);
     } catch (err) {
       next(err);
     }

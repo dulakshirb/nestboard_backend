@@ -246,7 +246,7 @@ propertiesRouter.get(
       const vendorId = req.user?.id;
       if (!vendorId) throw Errors.unauthenticated();
       const properties = await prisma.property.findMany({
-        where: { isActive: true, vendorId },
+        where: { vendorId },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         include: { roomTypes: true },
       });

@@ -13,6 +13,7 @@ export type PropertyDTO = {
   price: string;
   rating: number;
   isFavorite: boolean;
+  isActive: boolean;
   image: string;
 };
 
@@ -53,6 +54,7 @@ export function toPropertyDTO(
     price: minPrice !== null ? compactKilo(minPrice) : "-",
     rating: Number(p.rating.toString()),
     isFavorite,
+    isActive: p.isActive,
     image: p.imageUrl,
   };
 }

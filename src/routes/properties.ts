@@ -686,7 +686,10 @@ propertiesRouter.get("/:id/room-types", async (req, res, next) => {
     const roomIds = property.roomTypes.flatMap((rt) =>
       rt.rooms.map((room) => room.id),
     );
-    const window = availabilityWindow(req.query);
+    // const window = availabilityWindow(req.query);
+    const window = req.query.all === "true"
+    ? {start:new Date("2000-01-01"), end:new Date("2100-01-01")}
+    : availabilityWindow(req.query)
     const booked = await bookedSeatsByRoom(roomIds, window);
 
     res.json(

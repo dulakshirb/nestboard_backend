@@ -3,7 +3,7 @@ services:
     name: nestboard-backend
     runtime: node
     plan: free
-    buildCommand: npm install && npm run build && npx prisma generate
+    buildCommand: npm install --include=dev && npm run build && npx prisma generate
     startCommand: npx prisma migrate deploy && node dist/server.js
     envVars:
       - key: NODE_ENV

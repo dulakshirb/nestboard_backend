@@ -14,6 +14,7 @@ import { usersRouter } from "./routes/users.js";
 import path from "node:path";
 import rateLimit from "express-rate-limit";
 import { reviewsRouter } from "./routes/reviews.js";
+import { notificationsRouter } from "./routes/notifications.js";
 
 export function buildApp(): Express {
   const app = express();
@@ -43,6 +44,7 @@ export function buildApp(): Express {
   app.use("/api/uploads", uploadsRouter);
   app.use("/api/users", usersRouter);
   app.use("/api/reviews", reviewsRouter);
+  app.use("/api/notifications", notificationsRouter);
   app.use("/uploads", express.static(path.resolve(env.UPLOAD_LOCAL_DIR)));
 
   app.get("/", (_req, res) => {

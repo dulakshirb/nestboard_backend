@@ -11,6 +11,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "seed": "tsx prisma/seed.ts",
     "format": "npx prettier . --write"
   },
@@ -40,6 +42,7 @@
     "prettier": "^3.8.4",
     "prisma": "^7.9.1",
     "tsx": "^4.22.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }

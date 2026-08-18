@@ -49,3 +49,12 @@ export const requireRole =
       return next(Errors.forbidden(`Requires role ${role}`));
     next();
   };
+
+export const allowRoles =
+  (...roles: Role[]): RequestHandler =>
+  (req, _res, next) => {
+    if (!req.user) return next(Errors.unauthenticated());
+    if (!roles.includes(req.user.role))
+      return next(Errors.forbidden(`Requires one of roles ${roles.join(", ")}`));
+    next();
+  };

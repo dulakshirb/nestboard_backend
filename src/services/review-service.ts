@@ -31,6 +31,11 @@ export async function createOrUpdateReview(
   if (!booking) throw Errors.forbidden("You can only review properties you have booked and confirmed");
 
   //Create or update review
+  const existingReview = await db.review.findUnique({
+    where: { userId_propertyId: { userId, propertyId } },
+    select: { id: true },
+  });
+
   const review = await db.review.upsert({
     where: {
       userId_propertyId: {
@@ -63,7 +68,7 @@ export async function createOrUpdateReview(
   // Update property rating
   await updatePropertyRating(propertyId, db);
 
-  return review;
+  return { review, created: !existingReview };
 }
 
 export async function updatePropertyRating(propertyId: string, db: PrismaClient = defaultPrisma) {
@@ -130,4 +135,22 @@ export async function getUserReviewForProperty(
       },
     },
   });
+}
+
+export async function deleteReview(
+  userId: string,
+  propertyId: string,
+  db: PrismaClient = defaultPrisma,
+) {
+  const review = await db.review.findUnique({
+    where: { userId_propertyId: { userId, propertyId } },
+  });
+  if (!review) throw Errors.notFound("Review");
+
+  await db.review.delete({
+    where: { userId_propertyId: { userId, propertyId } },
+  });
+
+  await updatePropertyRating(propertyId, db);
+  return { deleted: true };
 }

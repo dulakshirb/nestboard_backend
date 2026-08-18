@@ -46,13 +46,13 @@ echo "  → property $PID"
 
 RTID=$(curl -s -X POST "$API/api/properties/$PID/room-types" \
   -H "Authorization: Bearer $TOKEN_A" -H "Content-Type: application/json" \
-  -d '{"name":"Demo Room Type","pricePerMonth":25000,"seatCapacity":2,"hasAC":true}' \
+  -d '{"name":"Demo Room Type","pricePerMonth":25000,"hasAC":true}' \
   | json_get ".id")
 echo "  → room type $RTID"
 
 ROOM_ID=$(curl -s -X POST "$API/api/properties/$PID/room-types/$RTID/rooms" \
   -H "Authorization: Bearer $TOKEN_A" -H "Content-Type: application/json" \
-  -d '{"roomLabel":"Demo Room 1"}' \
+  -d '{"roomLabel":"Demo Room 1","seatCapacity":2}' \
   | json_get ".id")
 echo "  → room $ROOM_ID"
 

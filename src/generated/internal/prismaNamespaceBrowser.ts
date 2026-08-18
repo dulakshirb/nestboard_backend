@@ -58,7 +58,8 @@ export const ModelName = {
   Room: 'Room',
   Booking: 'Booking',
   Favorite: 'Favorite',
-  Review: 'Review'
+  Review: 'Review',
+  Notification: 'Notification'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -129,7 +130,6 @@ export const RoomTypeScalarFieldEnum = {
   propertyId: 'propertyId',
   name: 'name',
   pricePerMonth: 'pricePerMonth',
-  seatCapacity: 'seatCapacity',
   hasAC: 'hasAC',
   isAvailable: 'isAvailable',
   createdAt: 'createdAt'
@@ -142,6 +142,7 @@ export const RoomScalarFieldEnum = {
   id: 'id',
   roomTypeId: 'roomTypeId',
   roomLabel: 'roomLabel',
+  seatCapacity: 'seatCapacity',
   isAvailable: 'isAvailable',
   createdAt: 'createdAt'
 } as const
@@ -186,6 +187,20 @@ export const ReviewScalarFieldEnum = {
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  message: 'message',
+  read: 'read',
+  bookingId: 'bookingId',
+  propertyId: 'propertyId',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const SortOrder = {

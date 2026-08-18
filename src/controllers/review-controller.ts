@@ -6,12 +6,12 @@ type PropertyParams = { propertyId: string }
 export const create: RequestHandler<PropertyParams> = async (req, res, next) => {
   try {
     const propertyId = req.params.propertyId;
-    const review = await svc.createOrUpdateReview(
+    const { review, created } = await svc.createOrUpdateReview(
       req.user!.id,
       propertyId,
       req.body,
     );
-    res.status(201).json(review);
+    res.status(created ? 201 : 200).json(review);
   } catch (err) {
     next(err);
   }
@@ -35,6 +35,16 @@ export const getUserReview: RequestHandler<PropertyParams> = async (req, res, ne
       propertyId,
     );
     res.json(review ?? null);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const remove: RequestHandler<PropertyParams> = async (req, res, next) => {
+  try {
+    const propertyId = req.params.propertyId;
+    const result = await svc.deleteReview(req.user!.id, propertyId);
+    res.json(result);
   } catch (err) {
     next(err);
   }

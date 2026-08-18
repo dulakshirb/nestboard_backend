@@ -203,12 +203,25 @@ propertiesRouter.get("/", optionalAuth, async (req, res, next) => {
   try {
     const { page, limit, skip, take } = getPagination(req.query);
     const where = propertyFilters(req.query);
+
+    const sort = typeof req.query.sort === "string" ? req.query.sort : "newest";
+    let orderBy: Prisma.PropertyOrderByWithRelationInput[];
+    switch (sort) {
+      case "rating":
+        orderBy = [{ rating: "desc" }, { id: "desc" }];
+        break;
+      case "oldest":
+        orderBy = [{ createdAt: "asc" }, { id: "asc" }];
+        break;
+      default:
+        orderBy = [{ createdAt: "desc" }, { id: "desc" }];
+    }
+
     const [total, properties] = await prisma.$transaction([
       prisma.property.count({ where }),
       prisma.property.findMany({
         where,
-        // id breaks createdAt ties so page order is deterministic
-        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        orderBy,
         skip,
         take,
         include: { roomTypes: true },
@@ -414,7 +427,7 @@ propertiesRouter.get("/:id", optionalAuth, async (req, res, next) => {
     const property = await prisma.property.findUnique({
       where: { id: String(req.params.id) },
       include: {
-        roomTypes: { include: { rooms: { select: { id: true } } } },
+        roomTypes: { include: { rooms: { select: { id: true, seatCapacity: true } } } },
       },
     });
     if (!property) throw Errors.notFound("Property");
@@ -425,7 +438,7 @@ propertiesRouter.get("/:id", optionalAuth, async (req, res, next) => {
     const window = availabilityWindow(req.query);
     const booked = await bookedSeatsByRoom(roomIds, window);
     const totalSeats = property.roomTypes.reduce(
-      (sum, rt) => sum + rt.seatCapacity * rt.rooms.length,
+      (sum, rt) => sum + rt.rooms.reduce((s, r) => s + r.seatCapacity, 0),
       0,
     );
     const bookedSeats = [...booked.values()].reduce((a, b) => a + b, 0);
@@ -677,7 +690,7 @@ propertiesRouter.get("/:id/room-types", async (req, res, next) => {
       include: {
         roomTypes: {
           orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-          include: { rooms: { select: { id: true } } },
+          include: { rooms: { select: { id: true, seatCapacity: true } } },
         },
       },
     });
@@ -698,7 +711,8 @@ propertiesRouter.get("/:id/room-types", async (req, res, next) => {
           (sum, room) => sum + (booked.get(room.id) ?? 0),
           0,
         );
-        return toRoomTypeDTO(rt, rt.rooms.length, bookedSeats);
+        const totalSeatCapacity = rt.rooms.reduce((s, r) => s + r.seatCapacity, 0);
+        return toRoomTypeDTO(rt, rt.rooms.length, totalSeatCapacity, bookedSeats);
       }),
     );
   } catch (err) {
@@ -737,7 +751,7 @@ propertiesRouter.get("/:id/room-types/:roomTypeId", async (req, res, next) => {
       return {
         roomId: room.id,
         roomName: room.roomLabel,
-        booking: Array.from({ length: roomType.seatCapacity }, (_, i) => {
+        booking: Array.from({ length: room.seatCapacity }, (_, i) => {
           const tenant = tenantBySeat.get(i + 1);
           return {
             seatIndex: i + 1,
@@ -752,7 +766,7 @@ propertiesRouter.get("/:id/room-types/:roomTypeId", async (req, res, next) => {
       id: roomType.id,
       name: roomType.name,
       pricePerMonth: roomType.pricePerMonth.toString(),
-      maxSeatsCount: roomType.seatCapacity,
+      seatCapacity: rooms.reduce((s, r) => s + r.booking.length, 0),
       roomsCount: rooms.length,
       hasAC: roomType.hasAC,
       rooms,

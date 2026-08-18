@@ -32,11 +32,6 @@ enum PropertyType {
   HOTEL
 }
 
-enum ReviewStatus {
-  ACTIVE
-  DELETED
-}
-
 model User {
   id          String   @id @default(uuid()) @db.Uuid
   email       String   @unique
@@ -54,6 +49,7 @@ model User {
 
   favorites Favorite[]
   reviews   Review[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -93,6 +89,7 @@ model Property {
   vendor    User       @relation("VendorProperties", fields: [vendorId], references: [id], onDelete: Cascade)
   roomTypes RoomType[]
   reviews   Review[]
+  notifications Notification[]
 
   @@index([city])
   @@index([type])
@@ -105,7 +102,6 @@ model RoomType {
   propertyId    String   @map("property_id") @db.Uuid
   name          String
   pricePerMonth Decimal  @map("price_per_month") @db.Decimal(10, 2)
-  seatCapacity  Int      @map("seat_capacity")
   hasAC         Boolean  @default(false) @map("has_ac")
   isAvailable   Boolean  @default(true) @map("is_available")
   createdAt     DateTime @default(now()) @map("created_at")
@@ -121,6 +117,7 @@ model Room {
   id          String   @id @default(uuid()) @db.Uuid
   roomTypeId  String   @map("room_type_id") @db.Uuid
   roomLabel   String   @map("room_label")
+  seatCapacity  Int      @map("seat_capacity")
   isAvailable Boolean  @default(true) @map("is_available")
   createdAt   DateTime @default(now()) @map("created_at")
 
@@ -144,9 +141,10 @@ model Booking {
   bookingStatus  BookingStatus @default(PENDING) @map("booking_status")
   createdAt      DateTime      @default(now()) @map("created_at")
 
-  tenant  User     @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  room    Room     @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  tenant  User           @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  room    Room           @relation(fields: [roomId], references: [id], onDelete: Restrict)
   reviews Review[]
+  notifications Notification[]
 
   @@index([roomId, seatNumber, bookingStatus, leaseStart, leaseEnd])
   @@index([tenantId, createdAt(sort: Desc)])
@@ -183,4 +181,22 @@ model Review {
   @@index([propertyId])
   @@index([userId])
   @@map("reviews")
+}
+
+model Notification {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  type       String
+  message    String   @db.Text
+  read       Boolean  @default(false)
+  bookingId  String?  @map("booking_id") @db.Uuid
+  propertyId String?  @map("property_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  booking  Booking?  @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("notifications")
 }

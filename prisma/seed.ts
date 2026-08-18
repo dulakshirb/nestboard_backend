@@ -67,9 +67,9 @@ async function main() {
     }));
 
   for (const rt of [
-    { name: "Room A", pricePerMonth: 20000, seatCapacity: 2, hasAC: true },
-    { name: "Room B", pricePerMonth: 22000, seatCapacity: 2, hasAC: true },
-    { name: "Room C", pricePerMonth: 18000, seatCapacity: 3, hasAC: false },
+    { name: "Room A", pricePerMonth: 20000, hasAC: true },
+    { name: "Room B", pricePerMonth: 22000, hasAC: true },
+    { name: "Room C", pricePerMonth: 18000, hasAC: false },
   ]) {
     let roomType = await prisma.roomType.findFirst({
       where: { propertyId: property.id, name: rt.name },
@@ -85,7 +85,7 @@ async function main() {
       });
       if (!room)
         await prisma.room.create({
-          data: { roomTypeId: roomType.id, roomLabel: label },
+          data: { roomTypeId: roomType.id, roomLabel: label, seatCapacity: 3 },
         });
     }
   }

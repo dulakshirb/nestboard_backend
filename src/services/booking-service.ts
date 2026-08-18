@@ -4,6 +4,7 @@ import { prisma as defaultPrisma } from "../lib/prisma.js";
 import { Errors } from "../lib/errors.js";
 import type { CreateBookingInput } from "../schemas/booking.js";
 import { leaseRange, TEN_MIN_MS } from "./availability.js";
+import { createNotification } from "./notification-service.js";
 async function createBooking(
   tenantId: string,
   input: CreateBookingInput,
@@ -22,9 +23,9 @@ async function createBooking(
       if (!room.isAvailable || !room.roomType.isAvailable) {
         throw Errors.conflict("Room is not available");
       }
-      if (input.seatNumber > room.roomType.seatCapacity) {
+      if (input.seatNumber > room.seatCapacity) {
         throw Errors.validation(
-          `Seat ${input.seatNumber} exceeds capacity ${room.roomType.seatCapacity}`,
+          `Seat ${input.seatNumber} exceeds capacity ${room.seatCapacity}`,
         );
       }
 
@@ -38,7 +39,16 @@ async function createBooking(
           leaseStart: { lt: end },
           leaseEnd: { gt: start },
         },
-        select: { id: true, bookingStatus: true, createdAt: true },
+        select: {
+          id: true,
+          bookingStatus: true,
+          createdAt: true,
+          tenantId: true,
+          seatNumber: true,
+          room: {
+            include: { roomType: { include: { property: true } } },
+          },
+        },
       });
 
       if (conflict) {
@@ -53,6 +63,13 @@ async function createBooking(
               paymentStatus: PaymentStatus.FAILED,
             },
           });
+          await createNotification({
+            userId: conflict.tenantId,
+            type: "BOOKING_EXPIRED",
+            message: `Your booking for ${conflict.room.roomType.property.title} — ${conflict.room.roomLabel} Seat ${conflict.seatNumber} has expired.`,
+            bookingId: conflict.id,
+            propertyId: conflict.room.roomType.property.id,
+          }, tx as PrismaClient);
         } else {
           throw Errors.conflict("Seat unavailable for this period");
         }
@@ -87,7 +104,7 @@ export async function createBookingPending(
   input: CreateBookingInput,
   db: PrismaClient = defaultPrisma,
 ) {
-  return createBooking(
+  const result = await createBooking(
     tenantId,
     input,
     {
@@ -96,6 +113,33 @@ export async function createBookingPending(
     },
     db,
   );
+
+  const full = await db.booking.findUnique({
+    where: { id: result.id },
+    include: { room: { include: { roomType: { include: { property: true } } } } },
+  });
+
+  if (full) {
+    const property = full.room.roomType.property;
+    await createNotification({
+      userId: tenantId,
+      type: "BOOKING_RECEIVED",
+      message: `Your booking request for ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber} is pending confirmation.`,
+      bookingId: full.id,
+      propertyId: property.id,
+    });
+    if (property.vendorId !== tenantId) {
+      await createNotification({
+        userId: property.vendorId,
+        type: "BOOKING_RECEIVED",
+        message: `New booking request at ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber}. Awaiting confirmation.`,
+        bookingId: full.id,
+        propertyId: property.id,
+      });
+    }
+  }
+
+  return result;
 }
 
 // books and confirms in a single transaction
@@ -104,7 +148,7 @@ export async function createBookingConfirmed(
   input: CreateBookingInput,
   db: PrismaClient = defaultPrisma,
 ) {
-  return createBooking(
+  const result = await createBooking(
     tenantId,
     input,
     {
@@ -113,6 +157,33 @@ export async function createBookingConfirmed(
     },
     db,
   );
+
+  const full = await db.booking.findUnique({
+    where: { id: result.id },
+    include: { room: { include: { roomType: { include: { property: true } } } } },
+  });
+
+  if (full) {
+    const property = full.room.roomType.property;
+    await createNotification({
+      userId: tenantId,
+      type: "BOOKING_CONFIRMED",
+      message: `Your booking for ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber} has been confirmed.`,
+      bookingId: full.id,
+      propertyId: property.id,
+    });
+    if (property.vendorId !== tenantId) {
+      await createNotification({
+        userId: property.vendorId,
+        type: "BOOKING_RECEIVED",
+        message: `New confirmed booking at ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber}.`,
+        bookingId: full.id,
+        propertyId: property.id,
+      });
+    }
+  }
+
+  return result;
 }
 
 export async function confirmBooking(
@@ -120,9 +191,12 @@ export async function confirmBooking(
   tenantId: string,
   db: PrismaClient = defaultPrisma,
 ) {
-  return db.$transaction(
+  const result = await db.$transaction(
     async (tx) => {
-      const booking = await tx.booking.findUnique({ where: { id: bookingId } });
+      const booking = await tx.booking.findUnique({
+        where: { id: bookingId },
+        include: { room: { include: { roomType: { include: { property: true } } } } },
+      });
       if (!booking) throw Errors.notFound("Booking");
       if (booking.tenantId !== tenantId) throw Errors.forbidden();
       if (booking.bookingStatus !== BookingStatus.PENDING) {
@@ -136,6 +210,13 @@ export async function confirmBooking(
             paymentStatus: PaymentStatus.FAILED,
           },
         });
+        await createNotification({
+          userId: tenantId,
+          type: "BOOKING_EXPIRED",
+          message: `Your booking for ${booking.room.roomType.property.title} — ${booking.room.roomLabel} Seat ${booking.seatNumber} has expired.`,
+          bookingId: booking.id,
+          propertyId: booking.room.roomType.property.id,
+        }, tx as PrismaClient);
         throw Errors.conflict("Booking expired before payment");
       }
       return tx.booking.update({
@@ -150,6 +231,91 @@ export async function confirmBooking(
       isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
     },
   );
+
+  const full = await db.booking.findUnique({
+    where: { id: result.id },
+    include: { room: { include: { roomType: { include: { property: true } } } } },
+  });
+
+  if (full) {
+    const property = full.room.roomType.property;
+    await createNotification({
+      userId: tenantId,
+      type: "BOOKING_CONFIRMED",
+      message: `Your booking for ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber} has been confirmed.`,
+      bookingId: full.id,
+      propertyId: property.id,
+    });
+    if (property.vendorId !== tenantId) {
+      await createNotification({
+        userId: property.vendorId,
+        type: "BOOKING_RECEIVED",
+        message: `Booking confirmed at ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber}.`,
+        bookingId: full.id,
+        propertyId: property.id,
+      });
+    }
+  }
+
+  return result;
+}
+
+export async function cancelBooking(
+  bookingId: string,
+  tenantId: string,
+  db: PrismaClient = defaultPrisma,
+) {
+  const result = await db.$transaction(
+    async (tx) => {
+      const booking = await tx.booking.findUnique({ where: { id: bookingId } });
+      if (!booking) throw Errors.notFound("Booking");
+      if (booking.tenantId !== tenantId) throw Errors.forbidden();
+      if (booking.bookingStatus === BookingStatus.CANCELLED) {
+        throw Errors.conflict("Booking is already cancelled");
+      }
+      if (booking.bookingStatus === BookingStatus.CONFIRMED) {
+        throw Errors.conflict("Cannot cancel a confirmed booking");
+      }
+
+      return tx.booking.update({
+        where: { id: bookingId },
+        data: {
+          bookingStatus: BookingStatus.CANCELLED,
+          paymentStatus: PaymentStatus.FAILED,
+        },
+      });
+    },
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+    },
+  );
+
+  const full = await db.booking.findUnique({
+    where: { id: result.id },
+    include: { room: { include: { roomType: { include: { property: true } } } } },
+  });
+
+  if (full) {
+    const property = full.room.roomType.property;
+    await createNotification({
+      userId: tenantId,
+      type: "BOOKING_CANCELLED",
+      message: `Your booking for ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber} has been cancelled.`,
+      bookingId: full.id,
+      propertyId: property.id,
+    });
+    if (property.vendorId !== tenantId) {
+      await createNotification({
+        userId: property.vendorId,
+        type: "BOOKING_CANCELLED",
+        message: `Booking cancelled at ${property.title} — ${full.room.roomLabel} Seat ${full.seatNumber}.`,
+        bookingId: full.id,
+        propertyId: property.id,
+      });
+    }
+  }
+
+  return result;
 }
 
 export async function listMyBookings(
@@ -180,7 +346,7 @@ export async function ListVendorBookings(
     orderBy: { createdAt: "desc" },
     include: {
       tenant: {
-        select: { id: true, displayName: true, email: true, avatarUrl: true },
+        select: { id: true, displayName: true, avatarUrl: true, email: true },
       },
       room: {
         include: {

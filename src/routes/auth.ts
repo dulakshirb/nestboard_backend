@@ -161,6 +161,7 @@ authRouter.get("/me", verifyJwt, async (req, res, next) => {
         role: true,
         avatarUrl: true,
         bioTag: true,
+        createdAt: true,
       },
     });
     if (!user) throw Errors.notFound("User");

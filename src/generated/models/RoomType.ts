@@ -28,12 +28,10 @@ export type AggregateRoomType = {
 
 export type RoomTypeAvgAggregateOutputType = {
   pricePerMonth: runtime.Decimal | null
-  seatCapacity: number | null
 }
 
 export type RoomTypeSumAggregateOutputType = {
   pricePerMonth: runtime.Decimal | null
-  seatCapacity: number | null
 }
 
 export type RoomTypeMinAggregateOutputType = {
@@ -41,7 +39,6 @@ export type RoomTypeMinAggregateOutputType = {
   propertyId: string | null
   name: string | null
   pricePerMonth: runtime.Decimal | null
-  seatCapacity: number | null
   hasAC: boolean | null
   isAvailable: boolean | null
   createdAt: Date | null
@@ -52,7 +49,6 @@ export type RoomTypeMaxAggregateOutputType = {
   propertyId: string | null
   name: string | null
   pricePerMonth: runtime.Decimal | null
-  seatCapacity: number | null
   hasAC: boolean | null
   isAvailable: boolean | null
   createdAt: Date | null
@@ -63,7 +59,6 @@ export type RoomTypeCountAggregateOutputType = {
   propertyId: number
   name: number
   pricePerMonth: number
-  seatCapacity: number
   hasAC: number
   isAvailable: number
   createdAt: number
@@ -73,12 +68,10 @@ export type RoomTypeCountAggregateOutputType = {
 
 export type RoomTypeAvgAggregateInputType = {
   pricePerMonth?: true
-  seatCapacity?: true
 }
 
 export type RoomTypeSumAggregateInputType = {
   pricePerMonth?: true
-  seatCapacity?: true
 }
 
 export type RoomTypeMinAggregateInputType = {
@@ -86,7 +79,6 @@ export type RoomTypeMinAggregateInputType = {
   propertyId?: true
   name?: true
   pricePerMonth?: true
-  seatCapacity?: true
   hasAC?: true
   isAvailable?: true
   createdAt?: true
@@ -97,7 +89,6 @@ export type RoomTypeMaxAggregateInputType = {
   propertyId?: true
   name?: true
   pricePerMonth?: true
-  seatCapacity?: true
   hasAC?: true
   isAvailable?: true
   createdAt?: true
@@ -108,7 +99,6 @@ export type RoomTypeCountAggregateInputType = {
   propertyId?: true
   name?: true
   pricePerMonth?: true
-  seatCapacity?: true
   hasAC?: true
   isAvailable?: true
   createdAt?: true
@@ -206,7 +196,6 @@ export type RoomTypeGroupByOutputType = {
   propertyId: string
   name: string
   pricePerMonth: runtime.Decimal
-  seatCapacity: number
   hasAC: boolean
   isAvailable: boolean
   createdAt: Date
@@ -240,7 +229,6 @@ export type RoomTypeWhereInput = {
   propertyId?: Prisma.UuidFilter<"RoomType"> | string
   name?: Prisma.StringFilter<"RoomType"> | string
   pricePerMonth?: Prisma.DecimalFilter<"RoomType"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFilter<"RoomType"> | number
   hasAC?: Prisma.BoolFilter<"RoomType"> | boolean
   isAvailable?: Prisma.BoolFilter<"RoomType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"RoomType"> | Date | string
@@ -253,7 +241,6 @@ export type RoomTypeOrderByWithRelationInput = {
   propertyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pricePerMonth?: Prisma.SortOrder
-  seatCapacity?: Prisma.SortOrder
   hasAC?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -269,7 +256,6 @@ export type RoomTypeWhereUniqueInput = Prisma.AtLeast<{
   propertyId?: Prisma.UuidFilter<"RoomType"> | string
   name?: Prisma.StringFilter<"RoomType"> | string
   pricePerMonth?: Prisma.DecimalFilter<"RoomType"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFilter<"RoomType"> | number
   hasAC?: Prisma.BoolFilter<"RoomType"> | boolean
   isAvailable?: Prisma.BoolFilter<"RoomType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"RoomType"> | Date | string
@@ -282,7 +268,6 @@ export type RoomTypeOrderByWithAggregationInput = {
   propertyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pricePerMonth?: Prisma.SortOrder
-  seatCapacity?: Prisma.SortOrder
   hasAC?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -301,7 +286,6 @@ export type RoomTypeScalarWhereWithAggregatesInput = {
   propertyId?: Prisma.UuidWithAggregatesFilter<"RoomType"> | string
   name?: Prisma.StringWithAggregatesFilter<"RoomType"> | string
   pricePerMonth?: Prisma.DecimalWithAggregatesFilter<"RoomType"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntWithAggregatesFilter<"RoomType"> | number
   hasAC?: Prisma.BoolWithAggregatesFilter<"RoomType"> | boolean
   isAvailable?: Prisma.BoolWithAggregatesFilter<"RoomType"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RoomType"> | Date | string
@@ -311,7 +295,6 @@ export type RoomTypeCreateInput = {
   id?: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -324,7 +307,6 @@ export type RoomTypeUncheckedCreateInput = {
   propertyId: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -335,7 +317,6 @@ export type RoomTypeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -348,7 +329,6 @@ export type RoomTypeUncheckedUpdateInput = {
   propertyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -360,7 +340,6 @@ export type RoomTypeCreateManyInput = {
   propertyId: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -370,7 +349,6 @@ export type RoomTypeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -381,7 +359,6 @@ export type RoomTypeUncheckedUpdateManyInput = {
   propertyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -402,7 +379,6 @@ export type RoomTypeCountOrderByAggregateInput = {
   propertyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pricePerMonth?: Prisma.SortOrder
-  seatCapacity?: Prisma.SortOrder
   hasAC?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -410,7 +386,6 @@ export type RoomTypeCountOrderByAggregateInput = {
 
 export type RoomTypeAvgOrderByAggregateInput = {
   pricePerMonth?: Prisma.SortOrder
-  seatCapacity?: Prisma.SortOrder
 }
 
 export type RoomTypeMaxOrderByAggregateInput = {
@@ -418,7 +393,6 @@ export type RoomTypeMaxOrderByAggregateInput = {
   propertyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pricePerMonth?: Prisma.SortOrder
-  seatCapacity?: Prisma.SortOrder
   hasAC?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -429,7 +403,6 @@ export type RoomTypeMinOrderByAggregateInput = {
   propertyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pricePerMonth?: Prisma.SortOrder
-  seatCapacity?: Prisma.SortOrder
   hasAC?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -437,7 +410,6 @@ export type RoomTypeMinOrderByAggregateInput = {
 
 export type RoomTypeSumOrderByAggregateInput = {
   pricePerMonth?: Prisma.SortOrder
-  seatCapacity?: Prisma.SortOrder
 }
 
 export type RoomTypeScalarRelationFilter = {
@@ -487,14 +459,6 @@ export type RoomTypeUncheckedUpdateManyWithoutPropertyNestedInput = {
   deleteMany?: Prisma.RoomTypeScalarWhereInput | Prisma.RoomTypeScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type RoomTypeCreateNestedOneWithoutRoomsInput = {
   create?: Prisma.XOR<Prisma.RoomTypeCreateWithoutRoomsInput, Prisma.RoomTypeUncheckedCreateWithoutRoomsInput>
   connectOrCreate?: Prisma.RoomTypeCreateOrConnectWithoutRoomsInput
@@ -513,7 +477,6 @@ export type RoomTypeCreateWithoutPropertyInput = {
   id?: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -524,7 +487,6 @@ export type RoomTypeUncheckedCreateWithoutPropertyInput = {
   id?: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -565,7 +527,6 @@ export type RoomTypeScalarWhereInput = {
   propertyId?: Prisma.UuidFilter<"RoomType"> | string
   name?: Prisma.StringFilter<"RoomType"> | string
   pricePerMonth?: Prisma.DecimalFilter<"RoomType"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFilter<"RoomType"> | number
   hasAC?: Prisma.BoolFilter<"RoomType"> | boolean
   isAvailable?: Prisma.BoolFilter<"RoomType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"RoomType"> | Date | string
@@ -575,7 +536,6 @@ export type RoomTypeCreateWithoutRoomsInput = {
   id?: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -587,7 +547,6 @@ export type RoomTypeUncheckedCreateWithoutRoomsInput = {
   propertyId: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -613,7 +572,6 @@ export type RoomTypeUpdateWithoutRoomsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -625,7 +583,6 @@ export type RoomTypeUncheckedUpdateWithoutRoomsInput = {
   propertyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -635,7 +592,6 @@ export type RoomTypeCreateManyPropertyInput = {
   id?: string
   name: string
   pricePerMonth: runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity: number
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: Date | string
@@ -645,7 +601,6 @@ export type RoomTypeUpdateWithoutPropertyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -656,7 +611,6 @@ export type RoomTypeUncheckedUpdateWithoutPropertyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -667,7 +621,6 @@ export type RoomTypeUncheckedUpdateManyWithoutPropertyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pricePerMonth?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  seatCapacity?: Prisma.IntFieldUpdateOperationsInput | number
   hasAC?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -709,7 +662,6 @@ export type RoomTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   propertyId?: boolean
   name?: boolean
   pricePerMonth?: boolean
-  seatCapacity?: boolean
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: boolean
@@ -723,7 +675,6 @@ export type RoomTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   propertyId?: boolean
   name?: boolean
   pricePerMonth?: boolean
-  seatCapacity?: boolean
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: boolean
@@ -735,7 +686,6 @@ export type RoomTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   propertyId?: boolean
   name?: boolean
   pricePerMonth?: boolean
-  seatCapacity?: boolean
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: boolean
@@ -747,13 +697,12 @@ export type RoomTypeSelectScalar = {
   propertyId?: boolean
   name?: boolean
   pricePerMonth?: boolean
-  seatCapacity?: boolean
   hasAC?: boolean
   isAvailable?: boolean
   createdAt?: boolean
 }
 
-export type RoomTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "propertyId" | "name" | "pricePerMonth" | "seatCapacity" | "hasAC" | "isAvailable" | "createdAt", ExtArgs["result"]["roomType"]>
+export type RoomTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "propertyId" | "name" | "pricePerMonth" | "hasAC" | "isAvailable" | "createdAt", ExtArgs["result"]["roomType"]>
 export type RoomTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   property?: boolean | Prisma.PropertyDefaultArgs<ExtArgs>
   rooms?: boolean | Prisma.RoomType$roomsArgs<ExtArgs>
@@ -777,7 +726,6 @@ export type $RoomTypePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     propertyId: string
     name: string
     pricePerMonth: runtime.Decimal
-    seatCapacity: number
     hasAC: boolean
     isAvailable: boolean
     createdAt: Date
@@ -1210,7 +1158,6 @@ export interface RoomTypeFieldRefs {
   readonly propertyId: Prisma.FieldRef<"RoomType", 'String'>
   readonly name: Prisma.FieldRef<"RoomType", 'String'>
   readonly pricePerMonth: Prisma.FieldRef<"RoomType", 'Decimal'>
-  readonly seatCapacity: Prisma.FieldRef<"RoomType", 'Int'>
   readonly hasAC: Prisma.FieldRef<"RoomType", 'Boolean'>
   readonly isAvailable: Prisma.FieldRef<"RoomType", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"RoomType", 'DateTime'>

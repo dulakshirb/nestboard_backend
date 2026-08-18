@@ -110,8 +110,6 @@ export type RoomTypeDTO = {
   name: string;
   pricePerMonth: string;
   freeSeats: number;
-  // maxSeatsCount is per room; seatCapacity is the total across rooms
-  maxSeatsCount: number;
   roomsCount: number;
   seatCapacity: number;
   hasAC: boolean;
@@ -120,17 +118,16 @@ export type RoomTypeDTO = {
 export function toRoomTypeDTO(
   roomType: PrismaRoomType,
   roomsCount: number,
+  totalSeatCapacity: number,
   bookedSeats: number,
 ): RoomTypeDTO {
-  const totalSeats = roomType.seatCapacity * roomsCount;
   return {
     id: roomType.id,
     name: roomType.name,
     pricePerMonth: roomType.pricePerMonth.toString(),
-    freeSeats: Math.max(totalSeats - bookedSeats, 0),
-    maxSeatsCount: roomType.seatCapacity,
+    freeSeats: Math.max(totalSeatCapacity - bookedSeats, 0),
     roomsCount,
-    seatCapacity: totalSeats,
+    seatCapacity: totalSeatCapacity,
     hasAC: roomType.hasAC,
   };
 }

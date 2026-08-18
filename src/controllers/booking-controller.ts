@@ -32,6 +32,18 @@ export const confirm: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const cancel: RequestHandler = async (req, res, next) => {
+  try {
+    const booking = await svc.cancelBooking(
+      String(req.params.id!),
+      req.user!.id,
+    );
+    res.json(booking);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const myBookings: RequestHandler = async (req, res, next) => {
   try {
     res.json(await svc.listMyBookings(req.user!.id));
@@ -42,7 +54,8 @@ export const myBookings: RequestHandler = async (req, res, next) => {
 
 export const adminBookings: RequestHandler = async (req, res, next) => {
   try {
-    res.json(await svc.ListVendorBookings(req.user!.id));
+    const bookings = await svc.ListVendorBookings(req.user!.id);
+    res.json(bookings);
   } catch (err) {
     next(err)
   }

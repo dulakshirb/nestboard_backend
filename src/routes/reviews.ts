@@ -30,3 +30,11 @@ reviewsRouter.get(
   validateParams(propertyIdParam),
   ctrl.getUserReview,
 );
+
+reviewsRouter.delete(
+  "/:propertyId",
+  verifyJwt,
+  requireRole(Role.USER),
+  validateParams(propertyIdParam),
+  ctrl.remove,
+);

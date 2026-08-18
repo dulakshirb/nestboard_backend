@@ -15,7 +15,7 @@ services:
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: https://your-frontend.vercel.app
+        value: https://nestboard-frontend-seven.vercel.app
       - key: RATE_LIMIT
         value: "100"
       - key: UPLOAD_PROVIDER
